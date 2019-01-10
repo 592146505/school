@@ -1,5 +1,7 @@
 package com.roamer.school.shiro.config;
 
+import org.apache.shiro.authc.credential.CredentialsMatcher;
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -20,41 +22,19 @@ import java.util.Map;
 @Configuration
 public class ShiroConfig {
 
-    /**
-     * SecurityManager
-     * Shiro核心,协调多个组件进行鉴权
-     *
-     * @param realm 数据供给
-     *
-     * @return SecurityManager
-     */
-    @Bean
-    public SecurityManager securityManager(Realm realm) {
-        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        securityManager.setRealm(realm);
-        return securityManager;
-    }
-
-    /**
-     * Realm
-     * 提供认证和鉴权数据
-     *
-     * @return shiro Realm
-     */
-    @Bean
-    public Realm myShiroRealm() {
-        return new MyShiroRealm();
-    }
 
     /**
      * 设置ShiroFilter过滤规则
+     * <ul>
+     * <li>anon:所有url都都可以匿名访问</li>
+     * <li>authc:所有url都必须认证通过才可以访问</li>
      * <p>
-     * anon:所有url都都可以匿名访问
-     * authc:所有url都必须认证通过才可以访问
+     * <p>
+     * </ul>
      *
-     * @param securityManager
+     * @param securityManager SecurityManager
      *
-     * @return
+     * @return ShiroFilterFactoryBean
      */
     @Bean
     public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager) {
@@ -77,4 +57,49 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
     }
+
+    /**
+     * SecurityManager
+     * Shiro核心,协调多个组件进行鉴权
+     *
+     * @param realm 自定义Realm
+     *
+     * @return SecurityManager
+     */
+    @Bean
+    public SecurityManager securityManager(Realm realm) {
+        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
+        securityManager.setRealm(realm);
+        return securityManager;
+    }
+
+    /**
+     * 自定义Realm
+     * 提供认证和鉴权数据
+     *
+     * @param credentialsMatcher 认证匹配器
+     *
+     * @return shiro 自定义Realm
+     */
+    @Bean
+    public Realm myShiroRealm(CredentialsMatcher credentialsMatcher) {
+        MyShiroRealm realm = new MyShiroRealm();
+        realm.setCredentialsMatcher(credentialsMatcher);
+        return realm;
+    }
+
+    /**
+     * 认证匹配器
+     *
+     * @return 认证匹配器
+     */
+    @Bean
+    public CredentialsMatcher credentialsMatcher() {
+        // 设置加密算法
+        HashedCredentialsMatcher credentialsMatcher = new HashedCredentialsMatcher("MD5");
+        // 加密次数
+        credentialsMatcher.setHashIterations(1024);
+        return credentialsMatcher;
+    }
+
 }

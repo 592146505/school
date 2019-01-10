@@ -2,6 +2,8 @@ package com.roamer.school.dao.core;
 
 import com.roamer.school.entity.core.UserInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * 用户数据操作接口
@@ -19,7 +21,7 @@ public interface UserInfoDao extends JpaRepository<UserInfo, Long>, UserInfoSwee
      *
      * @return 用户信息
      */
-    UserInfo findByUsername(String username);
-
+    @Query("FROM UserInfo WHERE username = :username")
+    UserInfo findByUsername(@Param("username") String username);
 
 }

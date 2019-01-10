@@ -12,13 +12,7 @@ spring:
         physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
     properties:
       hibernate:
-        # 注意使用InnoDB引擎
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
-  mvc:
-    view:
-      prefix: /view/
-      suffix: .html
-
 logging:
   level:
     com.roamer.house: debug

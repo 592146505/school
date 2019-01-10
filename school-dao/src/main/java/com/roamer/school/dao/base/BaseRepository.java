@@ -18,6 +18,7 @@ import java.util.Map;
  * @version V1.0
  * @date 2019/1/3 10:32
  */
+@Deprecated
 @NoRepositoryBean
 public interface BaseRepository<T, ID extends Serializable> extends PagingAndSortingRepository<T, ID> {
 

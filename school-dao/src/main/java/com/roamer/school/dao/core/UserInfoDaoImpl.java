@@ -28,7 +28,12 @@ public class UserInfoDaoImpl extends BaseRepositoryImpl<UserInfo, Long> implemen
         StringBuffer hql = new StringBuffer("FROM UserInfo").append(" WHERE id = :id");
         Map<String, Object> params = new HashMap<>(1);
         params.put("id", id);
-        return super.findEntityObject(hql, params);
+        return super.findEntity(hql, params);
+    }
+
+    @Override
+    public void savee(UserInfo userInfo) {
+        save(userInfo);
     }
 
 

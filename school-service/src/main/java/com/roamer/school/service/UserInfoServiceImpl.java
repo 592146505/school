@@ -4,6 +4,7 @@ import com.roamer.school.dao.core.UserInfoDao;
 import com.roamer.school.entity.core.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -20,6 +21,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Autowired
     private UserInfoDao userInfoDao;
 
+    @Transactional
     @Override
     public UserInfo findByUsername(String username) {
         Object object = userInfoDao.findUserById(1L);

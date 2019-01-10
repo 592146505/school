@@ -1,5 +1,8 @@
 package com.roamer.school.dao.core;
 
+import com.roamer.school.entity.core.UserInfo;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * 用户信息增强接口
  *
@@ -19,4 +22,12 @@ public interface UserInfoSweep {
     Object findIdByUsername(String username);
 
     Object findUserById(Long id);
+
+    /**
+     * 保存
+     *
+     * @param userInfo
+     */
+    @Transactional(rollbackFor = Exception.class)
+    void savee(UserInfo userInfo);
 }
