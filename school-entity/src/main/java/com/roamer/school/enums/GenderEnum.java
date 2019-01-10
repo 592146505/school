@@ -1,32 +1,34 @@
 package com.roamer.school.enums;
 
 /**
- * 用户状态枚举
+ * 性别枚举
  *
  * @author roamer
  * @version V1.0
- * @date 2018/12/26 22:31
+ * @date 2019/1/6 15:48
  */
-public enum StatusEnum implements BaseEnumInterface {
+public enum GenderEnum implements BaseEnumInterface {
 
     /**
-     * 未启用
+     * 未知
      */
-    DISABLE("0", "未启用"),
+    UNKNOWN("0", "未知"),
+
     /**
-     * 正常
+     * 男
      */
-    ENABLE("1", "正常"),
+    MALE("1", "男"),
+
     /**
-     * 锁定
+     * 女
      */
-    LOCKED("2", "锁定");
+    FEMALE("2", "女");
 
     String code;
 
     String desc;
 
-    StatusEnum(String code, String desc) {
+    GenderEnum(String code, String desc) {
         this.code = code;
         this.desc = desc;
     }

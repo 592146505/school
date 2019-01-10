@@ -1,12 +1,13 @@
 package com.roamer.school.entity.core;
 
 import com.roamer.school.entity.base.BaseEntity;
+import com.roamer.school.enums.ResourceTypeEnum;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -18,26 +19,22 @@ import java.util.Set;
  */
 @Getter
 @Setter
-@ToString
 @Entity
-@Table(name = "sys_permission")
+@Table(name = "sys_permission", uniqueConstraints = {@UniqueConstraint(columnNames = "url")})
 public class SysPermission extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 7775701095281011325L;
-    /**
-     * 功能名
-     */
+
+    /** 功能名 */
     private String name;
 
-    /**
-     * 资源类型，[menu|button]
-     */
-    @Column(columnDefinition = "enum('menu','button')")
-    private String resourceType;
-
+    /** 资源类型 */
+    @Enumerated(EnumType.ORDINAL)
+    private ResourceTypeEnum resourceType;
 
     /**
      * 资源路径
+     * <b>唯一约束</b>
      */
     private String url;
 
@@ -48,26 +45,17 @@ public class SysPermission extends BaseEntity implements Serializable {
      */
     private String permission;
 
-    /**
-     * 父编号
-     */
+    /** 父编号 */
     private Long parentId;
 
-    /**
-     * 父编号列表
-     */
+    /** 父编号列表 */
     private String parentIds;
 
-    /**
-     * 是否启用
-     */
-    private Boolean available = Boolean.FALSE;
+    /** 是否启用 */
+    private Boolean available = Boolean.TRUE;
 
-    /**
-     * 角色 n<->n 权限
-     */
-    @ManyToMany
-    @JoinTable(name = "sys_role_permission", joinColumns = {@JoinColumn(name = "permission_id")}, inverseJoinColumns = {@JoinColumn(name = "role_id")})
-    private Set<SysRole> roles;
+    /** 下辖 角色权限 */
+    @OneToMany(mappedBy = "sysPermission", fetch = FetchType.LAZY)
+    private Set<RolePermissionRelation> rolePermissionRelations = new HashSet<>();
 
 }

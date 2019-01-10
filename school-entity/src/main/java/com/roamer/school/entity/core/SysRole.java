@@ -7,7 +7,12 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+
+import static java.util.stream.Collectors.toSet;
 
 /**
  * 角色信息
@@ -18,16 +23,17 @@ import java.util.Set;
  */
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"rolePermissionRelations", "userRoleRelations"})
 @Entity
-@Table(name = "sys_role")
+@Table(name = "sys_role", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
 public class SysRole extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = -7693905288305429106L;
     /**
-     * 角色标识程序中判断使用,如"admin",这个是唯一的:
+     * 角色名称,程序中判断使用,如"admin"
+     * <b>唯一约束</b>
      */
-    private String role;
+    private String name;
 
     /**
      * 角色描述,UI界面显示使用
@@ -35,23 +41,42 @@ public class SysRole extends BaseEntity implements Serializable {
     private String description;
 
     /**
-     * 是否可用,如果不可用将不会添加给用户
+     * 是否启用
+     * true: 启用, false: 不启用
      */
-    private Boolean available = Boolean.FALSE;
+    private Boolean available = Boolean.TRUE;
 
     /**
-     * 角色n<->n权限
+     * 下辖 角色权限
      */
-    @ManyToMany
-    @JoinTable(name = "sys_role_permission", joinColumns = {@JoinColumn(name = "role_id")}, inverseJoinColumns = {@JoinColumn(name = "permission_id")})
-    private Set<SysPermission> permissions;
+    @OneToMany(mappedBy = "sysRole", fetch = FetchType.LAZY)
+    private Set<RolePermissionRelation> rolePermissionRelations = new HashSet<>();
+
 
     /**
-     * 用户n<->n角色
+     * 下辖 用户角色
      */
-    @ManyToMany
-    @JoinTable(name = "sys_user_role", joinColumns = {@JoinColumn(name = "role_id")}, inverseJoinColumns = {@JoinColumn(name = "uid")})
-    private Set<UserInfo> userInfos;
+    @OneToMany(mappedBy = "sysRole", fetch = FetchType.LAZY)
+    private Set<UserRoleRelation> userRoleRelations = new HashSet<>();
 
-
+    /**
+     * 获取当前角色下辖权限<br>
+     * <b>该方法只应当在对象处于session管理范围之内时才可使用</b>
+     *
+     * @param exclude 排除无效权限，默认true<br>
+     *                true: 排除   false: 不排除
+     *
+     * @return 可能返回空值 拥有权限
+     */
+    @Transient
+    public Set<SysPermission> getPermissions(Boolean exclude) {
+        // 默认为true
+        exclude = Optional.ofNullable(exclude).orElse(Boolean.TRUE);
+        if (Objects.nonNull(rolePermissionRelations)) {
+            boolean finalUse = exclude;
+            return rolePermissionRelations.stream().map(RolePermissionRelation::getSysPermission)
+                                          .filter(r -> finalUse ? r.getAvailable() : true).collect(toSet());
+        }
+        return null;
+    }
 }

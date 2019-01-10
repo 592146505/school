@@ -7,7 +7,7 @@ package com.roamer.school.enums;
  * @version V1.0
  * @date 2018/12/27 9:44
  */
-public interface BaseEnum {
+public interface BaseEnumInterface {
 
     /**
      * 获取code
@@ -21,5 +21,5 @@ public interface BaseEnum {
      *
      * @return 枚举描述
      */
-    String getDescribe();
+    String getDesc();
 }
